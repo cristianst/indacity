@@ -1,5 +1,17 @@
 {
   "expo": {
-    "sdkVersion": "23.0.0"
+    "sdkVersion": "23.0.0",
+    "name": "indacity",
+    "version": "1.0.0",
+    "slug": "indacity",
+    "facebookScheme": "fb197604940788122",
+    "facebookAppId": "197604940788122",
+    "facebookDisplayName": "indacity",
+    "ios": {
+      "bundleIdentifier": "com.cristianst.indacity"
+    },
+    "android": {
+      "package": "com.cristianst.indacity"
+    }
   }
 }
