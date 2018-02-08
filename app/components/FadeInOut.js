@@ -15,11 +15,9 @@ export default class FadeInOut extends Component {
 			visible: props.visible,
 		};
 	}
-
 	componentWillMount() {
 		this._visibility = new Animated.Value(this.props.visible ? 1 : 0);
 	}
-
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.visible) {
 			this.setState({ visible: true });

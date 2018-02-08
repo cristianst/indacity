@@ -38,8 +38,7 @@ export default class Stories extends Component {
 		this.setState({
 			loading: true
 		});
-		console.log("end reached.. loading");
-		console.log(this.state);
+
 		firebase.database().ref('/stories').orderByChild(this.props.orderBy)
 		//last vote, last key
 		// 6, 5 , >4< , 3 , 2, 1
@@ -48,35 +47,37 @@ export default class Stories extends Component {
 		.limitToLast(10)
 		.once('value')
 		.then(snapshot => {
-			const stories = snapshot.val();
-			const pairs = _.map(stories, (value, key) =>  {
-				return [key, value];
-		    });
+			const snapshotStories = snapshot.val();
 
-			const sortedStories = _.sortBy(pairs, (pair) => {
-				return pair[1].votes
-			}).reverse();
+			const numberOfNewStories = Object.keys(snapshotStories).length;
 
-			// remove first item of sorted array
-			// firebase sucks and includes it because of 'endAt'
+			if(numberOfNewStories > 1){
+				const pairs = _.map(snapshotStories, (value, key) =>  {
+					return [key, value];
+			    });
 
-			sortedStories.shift();
-			console.log(sortedStories);
+				const sortedStories = _.sortBy(pairs, (pair) => {
+					return pair[1].votes
+				}).reverse();
 
-			const lastStory = sortedStories[sortedStories.length - 1][1];
+				// remove first item of sorted array
+				// firebase sucks and includes it because of 'endAt'
+				sortedStories.shift();
 
-			const newStories = _.merge(currentStories, sortedStories);
+				const lastStory = sortedStories[sortedStories.length - 1][1];
 
-			console.log(newStories);
-            //
-			// this.setState({
-			// 	stories: newStories,
-			// 	lastLowestVote: lastStory.votes,
-			// 	loading: false,
-			// 	lastKey: lastStory.storyKey
-			// });
-            //
-			// console.log(this.state);
+				const newStories = currentStories.concat(sortedStories);
+
+				this.setState({
+					stories: newStories,
+					lastLowestVote: lastStory.votes,
+				});
+			}
+
+			this.setState({
+				loading: false
+			});
+
 		});
 
 	}
@@ -113,7 +114,6 @@ export default class Stories extends Component {
     }
 	renderFooter(){
 		if (!this.state.loading) {
-			console.log(this.state.loading);
 			return null;
 		}
 		return (
@@ -127,9 +127,6 @@ export default class Stories extends Component {
 				<ActivityIndicator animating size="large" />
   			</View>
 		);
-	}
-	onEndReached(){
-		console.log('end reached');
 	}
 	render(){
         const { geoCode, stories } = this.state;
@@ -147,7 +144,7 @@ export default class Stories extends Component {
 					style={styles.flatList}
 					keyExtractor={(item) => item[0]}
 					onEndReached={this.fetchMoreStories}
-					onEndReachedThreshold={0.1}
+					onEndReachedThreshold={0.001}
 					ItemSeparatorComponent={ () => (
 						<View style={styles.itemSeparator}></View>
 					)}

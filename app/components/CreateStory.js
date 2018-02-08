@@ -57,10 +57,6 @@ export default class CreateStory extends Component {
 		//
 		// const newStoryRef = ref.push(story);
 		// const storyKey = newStoryRef.key;
-
-
-
-
 	}
 	render(){
 		return (
